@@ -1,5 +1,5 @@
 import React from 'react';
-import { Article, ArticleCategory } from '../types';
+import { Article, ArticleCategory } from './types';
 
 interface ArticleEditorProps {
   article: Article;
