@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { SimulationResult, Article, Comment, Reply } from '../types';
+import { SimulationResult, Article, Comment, Reply } from './types';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell, AreaChart, Area, CartesianGrid } from 'recharts';
 import { generateReplyReaction } from '../services/geminiService';
 
