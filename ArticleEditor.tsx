@@ -1,5 +1,7 @@
-import React from 'react';
+
+import React, { useState } from 'react';
 import { Article, ArticleCategory } from './types';
+import { generateRandomArticle } from './geminiService';
 
 interface ArticleEditorProps {
   article: Article;
@@ -9,6 +11,8 @@ interface ArticleEditorProps {
 }
 
 const ArticleEditor: React.FC<ArticleEditorProps> = ({ article, setArticle, onPublish, isSimulating }) => {
+  const [isGeneratingRandom, setIsGeneratingRandom] = useState(false);
+
   const handleChange = (field: keyof Article, value: string | boolean) => {
     // Allow overlapping modes: simply update the specific field without resetting others
     setArticle(prev => ({ ...prev, [field]: value }));
@@ -21,6 +25,25 @@ const ArticleEditor: React.FC<ArticleEditorProps> = ({ article, setArticle, onPu
             title: '',
             content: ''
         }));
+    }
+  };
+
+  const handleRandomGenerate = async () => {
+    if (article.title || article.content) {
+        if (!confirm("작성 중인 내용이 사라집니다. 랜덤 기사를 생성하시겠습니까?")) return;
+    }
+    
+    setIsGeneratingRandom(true);
+    try {
+        const randomContent = await generateRandomArticle(article);
+        setArticle(prev => ({
+            ...prev,
+            ...randomContent
+        }));
+    } catch (error) {
+        alert("기사 생성에 실패했습니다. 잠시 후 다시 시도해주세요.");
+    } finally {
+        setIsGeneratingRandom(false);
     }
   };
 
@@ -100,6 +123,26 @@ const ArticleEditor: React.FC<ArticleEditorProps> = ({ article, setArticle, onPu
         {/* Toggles Row */}
         <div className="flex flex-col sm:flex-row justify-end items-end sm:items-center space-y-2 sm:space-y-0 sm:space-x-6 mb-4">
           
+          {/* Random Article Generator Button */}
+          <button
+            onClick={handleRandomGenerate}
+            disabled={isSimulating || isGeneratingRandom}
+            className={`
+               flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors border border-gray-300 shadow-sm
+               ${isGeneratingRandom ? 'opacity-70 cursor-wait' : ''}
+            `}
+          >
+             {isGeneratingRandom ? (
+                 <svg className="animate-spin h-4 w-4 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                 </svg>
+             ) : (
+                 <span className="text-lg">🎲</span>
+             )}
+             <span className="text-sm font-bold">랜덤 기사</span>
+          </button>
+
           {/* Time Machine Toggle */}
           <div className="flex items-center gap-2">
             <label className="flex items-center cursor-pointer group">
