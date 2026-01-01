@@ -110,37 +110,29 @@ const SimulationDashboard: React.FC<SimulationDashboardProps> = ({ result, artic
   ];
 
   const getPlatformStyle = (platform: string) => {
-    // New Modern Categorization
-    if (platform === 'SNS' || platform.includes('SNS')) {
-        return 'bg-gradient-to-r from-purple-100 to-pink-100 text-purple-800 border-purple-200'; // Integrated SNS style
-    } else if (platform.includes('여초')) {
-        return 'bg-pink-50 text-pink-700 border-pink-200 font-medium'; // Female-dominated
-    } else if (platform.includes('남초')) {
-        return 'bg-indigo-50 text-indigo-700 border-indigo-200 font-medium'; // Male-dominated
-    } else if (platform.includes('익명')) {
-        return 'bg-gray-700 text-gray-100 border-gray-600 font-bold'; // Anonymous (Darker/Edgy)
-    } else if (platform.includes('뉴스 포털')) {
-        return 'bg-green-50 text-green-800 border-green-200'; // Naver-like Green
-    }
-
-    // Specific legacy/Time Machine platforms
-    else if (platform.includes('인스타그램') || platform.includes('인스타')) {
-        return 'bg-fuchsia-100 text-fuchsia-800 border-fuchsia-200';
-    } else if (platform.includes('트위터') || platform.includes('X')) {
-        return 'bg-sky-100 text-sky-800 border-sky-200';
-    } else if (platform.includes('페이스북')) {
-        return 'bg-blue-100 text-blue-800 border-blue-200';
-    } else if (platform.includes('싸이월드')) {
-        return 'bg-orange-100 text-orange-800 border-orange-200';
-    } else if (platform.includes('하이텔') || platform.includes('천리안') || platform.includes('나우누리') || platform.includes('PC통신')) {
-        return 'bg-blue-900 text-white border-blue-800 font-mono';
-    } else if (platform.includes('신문') || platform.includes('투고') || platform.includes('대자보')) {
-        return 'bg-stone-200 text-stone-800 border-stone-300 font-serif';
-    } else if (platform.includes('뉴럴') || platform.includes('화성') || platform.includes('미래')) {
-        return 'bg-cyan-900 text-cyan-300 border-cyan-500 shadow-cyan-500/50';
-    } else {
-        return 'bg-gray-100 text-gray-800 border-gray-200';
-    }
+    const p = platform.toLowerCase();
+    
+    // Major Modern Platforms
+    if (p.includes('유튜브') || p.includes('youtube')) return 'bg-red-50 text-red-700 border-red-200 font-sans';
+    if (p.includes('인스타그램') || p.includes('insta')) return 'bg-gradient-to-tr from-yellow-100 via-pink-100 to-purple-100 text-purple-800 border-pink-200';
+    if (p.includes('트위터') || p.includes('x') || p.includes('twitter')) return 'bg-sky-50 text-sky-700 border-sky-200';
+    if (p.includes('블라인드') || p.includes('blind')) return 'bg-slate-800 text-white border-slate-600';
+    if (p.includes('에펨') || p.includes('남초') || p.includes('펨코')) return 'bg-blue-50 text-blue-800 border-blue-200';
+    if (p.includes('더쿠') || p.includes('여초') || p.includes('인스티즈')) return 'bg-pink-50 text-pink-700 border-pink-200';
+    if (p.includes('디시') || p.includes('dc') || p.includes('갤러리')) return 'bg-indigo-900 text-white border-indigo-700 font-bold';
+    if (p.includes('네이트') || p.includes('판') || p.includes('pann')) return 'bg-rose-50 text-rose-800 border-rose-200 border-l-4 border-l-rose-500';
+    if (p.includes('카카오') || p.includes('kakao') || p.includes('오픈채팅')) return 'bg-yellow-300 text-yellow-900 border-yellow-400 font-sans';
+    if (p.includes('네이버') || p.includes('뉴스')) return 'bg-green-50 text-green-700 border-green-200';
+    
+    // Legacy / Generic Categories
+    if (p.includes('sns')) return 'bg-purple-50 text-purple-700 border-purple-200';
+    if (p.includes('페이스북')) return 'bg-blue-100 text-blue-800 border-blue-200';
+    if (p.includes('싸이월드')) return 'bg-orange-100 text-orange-800 border-orange-200';
+    if (p.includes('하이텔') || p.includes('천리안') || p.includes('나우누리') || p.includes('pc통신')) return 'bg-blue-900 text-white border-blue-800 font-mono';
+    if (p.includes('신문') || p.includes('투고') || p.includes('대자보')) return 'bg-stone-200 text-stone-800 border-stone-300 font-serif';
+    if (p.includes('뉴럴') || p.includes('화성') || p.includes('미래')) return 'bg-cyan-900 text-cyan-300 border-cyan-500 shadow-cyan-500/50';
+    
+    return 'bg-gray-100 text-gray-800 border-gray-200';
   };
 
   const MetricCard = ({ title, value, max = 100, colorClass }: { title: string, value: number, max?: number, colorClass: string }) => (
@@ -212,7 +204,7 @@ const SimulationDashboard: React.FC<SimulationDashboardProps> = ({ result, artic
             </div>
         </div>
       </div>
-
+      
       {/* Market Impact Analysis (Stocks, Crypto, Forex) */}
       {result.stockAnalysis && result.stockAnalysis.length > 0 && (
         <div className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
@@ -371,29 +363,31 @@ const SimulationDashboard: React.FC<SimulationDashboardProps> = ({ result, artic
              </p>
           </div>
 
-          <div className={`bg-white p-8 rounded-lg shadow-sm border ${
+          <div className={`bg-white p-8 rounded-lg shadow-sm border relative overflow-hidden ${
               article.isEmergencyMode ? 'border-red-900 bg-red-50' :
               article.isCrazyMode ? 'border-purple-200 bg-purple-50' :
               article.isFakeNews ? 'border-red-200 bg-red-50' : 
               article.isTimeMachineMode ? 'border-amber-200 bg-amber-50' : 'border-gray-200'
           }`}>
-            <div className="flex flex-wrap gap-2 mb-4">
-                {article.isEmergencyMode && <span className="inline-block px-3 py-1 text-xs font-bold rounded-full bg-red-900 text-white animate-pulse">긴급 속보</span>}
-                {article.isCrazyMode && <span className="inline-block px-3 py-1 text-xs font-bold rounded-full bg-purple-600 text-white">미친 기자</span>}
-                {article.isFakeNews && <span className="inline-block px-3 py-1 text-xs font-bold rounded-full bg-orange-600 text-white">가짜 뉴스</span>}
-                {article.isTimeMachineMode && <span className="inline-block px-3 py-1 text-xs font-bold rounded-full bg-amber-600 text-white">기록물: {article.targetYear}년</span>}
-                {!article.isEmergencyMode && !article.isCrazyMode && !article.isFakeNews && !article.isTimeMachineMode && (
-                   <span className="inline-block px-3 py-1 text-xs font-bold rounded-full bg-gray-100 text-gray-600">{article.category}</span>
-                )}
-            </div>
-            <h1 className="text-2xl md:text-3xl font-serif font-bold text-gray-900 mb-2 leading-tight">
-              {article.title}
-            </h1>
-            <p className="text-sm text-gray-500 mb-6 border-b border-gray-200 pb-4">
-              {article.author} 기자 · {article.isTimeMachineMode ? `${article.targetYear}년 ${new Date().getMonth()+1}월 ${new Date().getDate()}일` : new Date(article.timestamp).toLocaleDateString()}
-            </p>
-            <div className={`prose max-w-none text-gray-700 text-sm md:text-base line-clamp-4 ${article.isTimeMachineMode ? 'font-serif' : ''}`}>
-              {article.content}
+            <div className="relative z-10">
+                <div className="flex flex-wrap gap-2 mb-4">
+                    {article.isEmergencyMode && <span className="inline-block px-3 py-1 text-xs font-bold rounded-full bg-red-900 text-white animate-pulse">긴급 속보</span>}
+                    {article.isCrazyMode && <span className="inline-block px-3 py-1 text-xs font-bold rounded-full bg-purple-600 text-white">미친 기자</span>}
+                    {article.isFakeNews && <span className="inline-block px-3 py-1 text-xs font-bold rounded-full bg-orange-600 text-white">가짜 뉴스</span>}
+                    {article.isTimeMachineMode && <span className="inline-block px-3 py-1 text-xs font-bold rounded-full bg-amber-600 text-white">기록물: {article.targetYear}년</span>}
+                    {!article.isEmergencyMode && !article.isCrazyMode && !article.isFakeNews && !article.isTimeMachineMode && (
+                    <span className="inline-block px-3 py-1 text-xs font-bold rounded-full bg-gray-100 text-gray-600">{article.category}</span>
+                    )}
+                </div>
+                <h1 className="text-2xl md:text-3xl font-serif font-bold text-gray-900 mb-2 leading-tight">
+                {article.title}
+                </h1>
+                <p className="text-sm text-gray-500 mb-6 border-b border-gray-200 pb-4">
+                {article.author} 기자 · {article.isTimeMachineMode ? `${article.targetYear}년 ${new Date().getMonth()+1}월 ${new Date().getDate()}일` : new Date(article.timestamp).toLocaleDateString()}
+                </p>
+                <div className={`prose max-w-none text-gray-700 text-sm md:text-base line-clamp-4 ${article.isTimeMachineMode ? 'font-serif' : ''}`}>
+                {article.content}
+                </div>
             </div>
           </div>
 
